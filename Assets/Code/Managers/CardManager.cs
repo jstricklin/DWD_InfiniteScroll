@@ -7,26 +7,39 @@ using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
+    [Tooltip("Add cards to be displayed in the UI")]
     [SerializeField] Card[] cards;
+    [Tooltip("Card container")]
     [SerializeField] RectTransform container;
-    [SerializeField] Dictionary<Suit, List<Card>> renderCards = new Dictionary<Suit, List<Card>>();
+    [Tooltip("Base Card prefab")]
     [SerializeField] GameObject cardPrefab;
+    Dictionary<Suit, List<Card>> renderCards = new Dictionary<Suit, List<Card>>();
+
+    #region card pool
+    int deckSize = 52;
+    Queue<GameObject> cardPool = new Queue<GameObject>();
+    GameObject spawnGO;
+    #endregion
+
     List<Card> tempList;
     Card tempCard;
 
-    // Start is called before the first frame update
     void Start()
     {
-        InitializeCards();
+        GenerateCardPool();
+        GenerateCards();
     }
 
-    void InitializeCards()
+    void GenerateCards()
     {
-        // generate cards
+        // We begin by iterating through our cards array, which is populated in the editor...
         for (int i = 0; i < cards.Length; i++)
         {
-            tempCard = new Card(cards[i].suit, cards[i].val, cards[i].face, Instantiate(cardPrefab));
-            
+            // ... then generate a new card data object with a reference to its instantiated cardPrefab
+            tempCard = new Card(cards[i].suit, cards[i].val, cards[i].face, DrawFromPool());
+
+
+            // Then we check if this card's suit has been processed before or not, and we add to our renderCard dictionary
             if (renderCards.TryGetValue(cards[i].suit, out List<Card> cardList))
             {
                 cardList.Add(tempCard);
@@ -39,16 +52,19 @@ public class CardManager : MonoBehaviour
                 renderCards[cards[i].suit] = tempList;
             }
         }
-        // organize cards and set cards to parent container
+
+        // Our suit order is determined by the value order in the Suit enum
         foreach (Suit suit in Enum.GetValues(typeof(Suit)))
         {
             try
             {
                 if (renderCards.TryGetValue(suit, out List<Card> cardList))
                 {
-                    tempList = cardList.OrderBy(a => a.val).ToList();
+                    // Once in our suit, we sort our cardList by card value and set to our parent container
+                    tempList = cardList.OrderBy(card => card.val).ToList();
                     for (int i = 0; i < tempList.Count; i++)
                     {
+                        // Our parent's content resizer and horizontal layout components will ensure our scrollable area is laid out properly and expanded to fit our spawned cards
                         tempList[i].SetParent(container);
                     }
                 }
@@ -61,5 +77,26 @@ public class CardManager : MonoBehaviour
                 Debug.Log(e.ToString());
             }
         }
+    }
+
+    void GenerateCardPool()
+    {
+        for (int i = 0; i < deckSize; i++)
+        {
+            spawnGO = Instantiate(cardPrefab);
+            AddToPool(spawnGO);
+        }
+    }
+    void AddToPool(GameObject toAdd)
+    {
+        spawnGO.transform.SetParent(transform);
+        spawnGO.SetActive(false);
+        cardPool.Enqueue(spawnGO);
+    }
+    GameObject DrawFromPool()
+    {
+        spawnGO = cardPool.Dequeue();
+        spawnGO.SetActive(true);
+        return spawnGO;
     }
 }
