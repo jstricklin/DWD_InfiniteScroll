@@ -9,11 +9,18 @@ public class CardManager : MonoBehaviour
 {
     [Tooltip("Add cards to be displayed in the UI")]
     [SerializeField] Card[] cards;
+
     [Tooltip("Card container")]
-    [SerializeField] RectTransform container;
+    [SerializeField] Transform container;
     [Tooltip("Base Card prefab")]
     [SerializeField] GameObject cardPrefab;
     Dictionary<Suit, List<Card>> renderCards = new Dictionary<Suit, List<Card>>();
+
+    #region card view
+    [Tooltip("Card View")]
+    [SerializeField] RectTransform cardView;
+    [SerializeField] int cardsToDisplay = 4;
+    #endregion
 
     #region card pool
     int deckSize = 52;
@@ -26,8 +33,18 @@ public class CardManager : MonoBehaviour
 
     void Start()
     {
+        SetCardViewSize();
         GenerateCardPool();
         GenerateCards();
+    }
+
+    private void SetCardViewSize()
+    {
+        HorizontalLayoutGroup layoutGroup = container.GetComponent<HorizontalLayoutGroup>();
+        float baseWidth = cardPrefab.GetComponent<RectTransform>().rect.width * cardsToDisplay;
+        float spacing = layoutGroup.spacing * (cardsToDisplay - 1);
+        float padding = layoutGroup.padding.left + layoutGroup.padding.right; 
+        cardView.sizeDelta = new Vector2(baseWidth + spacing + padding, cardView.rect.height);
     }
 
     void GenerateCards()
@@ -37,7 +54,6 @@ public class CardManager : MonoBehaviour
         {
             // ... then generate a new card data object with a reference to its instantiated cardPrefab
             tempCard = new Card(cards[i].suit, cards[i].val, cards[i].face, DrawFromPool());
-
 
             // Then we check if this card's suit has been processed before or not, and we add to our renderCard dictionary
             if (renderCards.TryGetValue(cards[i].suit, out List<Card> cardList))
@@ -78,7 +94,6 @@ public class CardManager : MonoBehaviour
             }
         }
     }
-
     void GenerateCardPool()
     {
         for (int i = 0; i < deckSize; i++)
