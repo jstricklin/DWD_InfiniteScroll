@@ -153,27 +153,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cards:
-  - suit: 0
-    val: 12
-    face: {fileID: 1120320234772160393, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
-  - suit: 0
-    val: 2
-    face: {fileID: -3935520832602544648, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
-  - suit: 1
-    val: 11
-    face: {fileID: 7475707691729567980, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
-  - suit: 1
-    val: 9
-    face: {fileID: -368442840031968867, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
-  - suit: 2
-    val: 4
-    face: {fileID: -3706913688101616947, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
   - suit: 2
     val: 11
     face: {fileID: -6362637180087896993, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
+  - suit: 1
+    val: 9
+    face: {fileID: -368442840031968867, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
+  - suit: 0
+    val: 2
+    face: {fileID: -3935520832602544648, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
   - suit: 3
     val: 13
     face: {fileID: -6279240630127538503, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
+  - suit: 1
+    val: 11
+    face: {fileID: 7475707691729567980, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
+  - suit: 0
+    val: 12
+    face: {fileID: 1120320234772160393, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
+  - suit: 2
+    val: 4
+    face: {fileID: -3706913688101616947, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
   - suit: 3
     val: 10
     face: {fileID: 5961895456564570466, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}

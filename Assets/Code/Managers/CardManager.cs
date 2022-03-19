@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
@@ -21,17 +22,10 @@ public class CardManager : MonoBehaviour
 
     void InitializeCards()
     {
-        // sort card order
+        // generate cards
         for (int i = 0; i < cards.Length; i++)
         {
-
-        }
-
-            // generate cards
-            for (int i = 0; i < cards.Length; i++)
-        {
             tempCard = new Card(cards[i].suit, cards[i].val, cards[i].face, Instantiate(cardPrefab));
-            tempCard.SetParent(container);
             
             if (renderCards.TryGetValue(cards[i].suit, out List<Card> cardList))
             {
@@ -43,6 +37,28 @@ public class CardManager : MonoBehaviour
 
                 tempList.Add(tempCard);
                 renderCards[cards[i].suit] = tempList;
+            }
+        }
+        // organize cards and set cards to parent container
+        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
+        {
+            try
+            {
+                if (renderCards.TryGetValue(suit, out List<Card> cardList))
+                {
+                    tempList = cardList.OrderBy(a => a.val).ToList();
+                    for (int i = 0; i < tempList.Count; i++)
+                    {
+                        tempList[i].SetParent(container);
+                    }
+                }
+                else
+                {
+                    throw new Exception($"No cards found for suit: {suit}");
+                }
+            } catch (Exception e)
+            {
+                Debug.Log(e.ToString());
             }
         }
     }
