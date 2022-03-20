@@ -40,19 +40,42 @@ public class CardManager : MonoBehaviour
 
     private void SetCardViewSize()
     {
+        // Here we dynamically resize our card display area to ensure we only display the desired amount of cards
         HorizontalLayoutGroup layoutGroup = container.GetComponent<HorizontalLayoutGroup>();
         float baseWidth = cardPrefab.GetComponent<RectTransform>().rect.width * cardsToDisplay;
         float spacing = layoutGroup.spacing * (cardsToDisplay - 1);
         float padding = layoutGroup.padding.left + layoutGroup.padding.right; 
         cardView.sizeDelta = new Vector2(baseWidth + spacing + padding, cardView.rect.height);
     }
-
+    void GenerateCardPool()
+    {
+        // Here we generate a pool of cards based on a max deckSize
+        for (int i = 0; i < deckSize; i++)
+        {
+            spawnGO = Instantiate(cardPrefab);
+            AddToPool(spawnGO);
+        }
+    }
+    void AddToPool(GameObject toAdd)
+    {
+        // Here we add (or could return) card GameObjects to the cardPool
+        spawnGO.transform.SetParent(transform);
+        spawnGO.SetActive(false);
+        cardPool.Enqueue(spawnGO);
+    }
+    GameObject DrawFromPool()
+    {
+        // Here we draw cards from the cardPool
+        spawnGO = cardPool.Dequeue();
+        spawnGO.SetActive(true);
+        return spawnGO;
+    }
     void GenerateCards()
     {
         // We begin by iterating through our cards array, which is populated in the editor...
         for (int i = 0; i < cards.Length; i++)
         {
-            // ... then generate a new card data object with a reference to its instantiated cardPrefab
+            // ... then generate a new card data object and draw a blank card from our card pool
             tempCard = new Card(cards[i].suit, cards[i].val, cards[i].face, DrawFromPool());
 
             // Then we check if this card's suit has been processed before or not, and we add to our renderCard dictionary
@@ -93,25 +116,5 @@ public class CardManager : MonoBehaviour
                 Debug.Log(e.ToString());
             }
         }
-    }
-    void GenerateCardPool()
-    {
-        for (int i = 0; i < deckSize; i++)
-        {
-            spawnGO = Instantiate(cardPrefab);
-            AddToPool(spawnGO);
-        }
-    }
-    void AddToPool(GameObject toAdd)
-    {
-        spawnGO.transform.SetParent(transform);
-        spawnGO.SetActive(false);
-        cardPool.Enqueue(spawnGO);
-    }
-    GameObject DrawFromPool()
-    {
-        spawnGO = cardPool.Dequeue();
-        spawnGO.SetActive(true);
-        return spawnGO;
     }
 }

@@ -10,3 +10,9 @@ Additional card sprites can be created easily in two steps:
 
 - Enter the Sprite Editor and crop new cards from the master Card sprite sheet in the Graphics folder.
 - Add new card's suit/value/face sprite to the Cards Array in the Card Manager.
+
+Acceptance Criteria:
+
+1. Cards are spawned and sorted at runtime by the CardManager.
+2. Blank cards are spawned and pooled to a decksize of 52 and can be populated when needed.
+3. Only 4 cards are visible at a time - this variable can be changed in the CardManager before entering PlayMode.
