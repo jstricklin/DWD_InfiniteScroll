@@ -11,15 +11,18 @@ public class CardManager : MonoBehaviour
     [SerializeField] Card[] cards;
 
     [Tooltip("Card container")]
-    [SerializeField] Transform container;
+    [SerializeField] RectTransform container;
     [Tooltip("Base Card prefab")]
-    [SerializeField] GameObject cardPrefab;
+    //[SerializeField] GameObject cardPrefab;
     Dictionary<Suit, List<Card>> renderCards = new Dictionary<Suit, List<Card>>();
 
     #region card view
     [Tooltip("Card View")]
     [SerializeField] RectTransform cardView;
     [SerializeField] int cardsToDisplay = 4;
+    [SerializeField] float spacing = 20f;
+    [SerializeField] float padding = 20f;
+    float cardWidth;
     #endregion
 
     #region card pool
@@ -29,30 +32,79 @@ public class CardManager : MonoBehaviour
     #endregion
 
     List<Card> tempList;
+    [SerializeField] List<GameObject> cardList = new List<GameObject>();
     Card tempCard;
 
     void Start()
     {
-        SetCardViewSize();
+
         GenerateCardPool();
+        SetCardViewSize();
         GenerateCards();
+    }
+
+    float lastX = 0;
+    float moveDir = 1;
+    public void ValueChanged(Vector2 vector)
+    {
+        //Debug.Log("val check: " + container.position.x);
+        moveDir = (container.position.x - lastX) > 0 ? 1 : -1;
+        lastX = container.position.x;
+        HandleCardScroll(moveDir);
+    }
+    Vector3 newPos;
+    Transform checkCard;
+    private void HandleCardScroll(float dir)
+    {
+        Debug.Log("check " + dir);
+        if (dir < 0)
+        {
+
+            checkCard = container.GetChild(0);
+            //Debug.Log($"transform checks : {(checkCard.position.x)} | {cardView.rect.width}");
+            if (checkCard.position.x + cardWidth * 2f < cardView.rect.width)
+            {
+                newPos = container.GetChild(container.childCount - 1).position;
+                newPos.x += (cardWidth * 2f) + spacing;
+                checkCard.position = newPos;
+                checkCard.transform.SetAsLastSibling();
+            }
+        } else
+        {
+            checkCard = container.GetChild(container.childCount - 1);
+            Debug.Log($"transform checks : {(checkCard.position.x)} | {cardView.rect.width}");
+            if (checkCard.position.x - cardWidth * 2f > cardView.rect.width * 3)
+            {
+                //Debug.Log("CHECK 2");
+
+                newPos = container.GetChild(0).position;
+                newPos.x -= (cardWidth * 2f) + spacing;
+                checkCard.position = newPos;
+                checkCard.transform.SetAsFirstSibling();
+            }
+        }
     }
 
     private void SetCardViewSize()
     {
-        // Here we dynamically resize our card display area to ensure we only display the desired amount of cards
+        //Here we dynamically resize our card display area to ensure we only display the desired amount of cards
         HorizontalLayoutGroup layoutGroup = container.GetComponent<HorizontalLayoutGroup>();
-        float baseWidth = cardPrefab.GetComponent<RectTransform>().rect.width * cardsToDisplay;
-        float spacing = layoutGroup.spacing * (cardsToDisplay - 1);
-        float padding = layoutGroup.padding.left + layoutGroup.padding.right; 
-        cardView.sizeDelta = new Vector2(baseWidth + spacing + padding, cardView.rect.height);
+        //float baseWidth = 100 * cardsToDisplay;
+        //float spacing = layoutGroup.spacing * (cardsToDisplay - 1);
+        //float padding = layoutGroup.padding.left + layoutGroup.padding.right;
+        float baseWidth = cardsToDisplay * cardWidth;
+        //cardView.sizeDelta = new Vector2(baseWidth + spacing + padding, cardView.rect.height);
+        cardView.sizeDelta = new Vector2(baseWidth + (spacing * (cardsToDisplay - 1)) + (padding * 2), cardView.rect.height);
     }
     void GenerateCardPool()
     {
         // Here we generate a pool of cards based on a max deckSize
         for (int i = 0; i < deckSize; i++)
         {
-            spawnGO = Instantiate(cardPrefab);
+            //spawnGO = Instantiate(cardPrefab);
+            spawnGO = new GameObject("Card " + i);
+            spawnGO.AddComponent<Image>().preserveAspect = true;
+            cardWidth = spawnGO.GetComponent<Image>().rectTransform.rect.width;
             AddToPool(spawnGO);
         }
     }
@@ -79,10 +131,10 @@ public class CardManager : MonoBehaviour
             tempCard = new Card(cards[i].suit, cards[i].val, cards[i].face, DrawFromPool());
 
             // Then we check if this card's suit has been processed before or not, and we add to our renderCard dictionary
-            if (renderCards.TryGetValue(cards[i].suit, out List<Card> cardList))
+            if (renderCards.TryGetValue(cards[i].suit, out List<Card> list))
             {
-                cardList.Add(tempCard);
-                renderCards[cards[i].suit] = cardList;
+                list.Add(tempCard);
+                renderCards[cards[i].suit] = list;
             } else
             {
                 tempList = new List<Card>();
@@ -97,14 +149,21 @@ public class CardManager : MonoBehaviour
         {
             try
             {
-                if (renderCards.TryGetValue(suit, out List<Card> cardList))
+                if (renderCards.TryGetValue(suit, out List<Card> list))
                 {
                     // Once in our suit, we sort our cardList by card value and set to our parent container
-                    tempList = cardList.OrderBy(card => card.val).ToList();
+                    tempList = list.OrderBy(card => card.val).ToList();
                     for (int i = 0; i < tempList.Count; i++)
                     {
-                        // Our parent's content resizer and horizontal layout components will ensure our scrollable area is laid out properly and expanded to fit our spawned cards
+
                         tempList[i].SetParent(container);
+                        newPos = tempList[i].GetGameObject().transform.position;
+
+                        newPos.x += padding + (cardList.Count * (cardWidth * 2f + spacing * 2));
+                        Debug.Log("check: " + newPos.x);
+                        cardList.Add(tempList[i].GetGameObject());
+                        tempList[i].SetPosition(newPos);
+
                     }
                 }
                 else

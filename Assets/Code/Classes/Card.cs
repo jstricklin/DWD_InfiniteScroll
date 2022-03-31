@@ -9,6 +9,7 @@ public class Card
     public int val;
     public Sprite face;
     Transform transform;
+    GameObject go;
 
     public Card(Suit suit, int val, Sprite face, GameObject go)
     {
@@ -17,10 +18,19 @@ public class Card
         this.face = face;
         this.transform = go.transform;
         go.GetComponent<Image>().sprite = face;
+        this.go = go;
     }
     public void SetParent(Transform parent)
     {
         transform.SetParent(parent, false);
+    }
+    public void SetPosition(Vector3 position)
+    {
+        transform.position = position;
+    }
+    public GameObject GetGameObject()
+    {
+        return go;
     }
 
 }

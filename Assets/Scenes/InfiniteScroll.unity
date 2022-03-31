@@ -178,9 +178,11 @@ MonoBehaviour:
     val: 10
     face: {fileID: 5961895456564570466, guid: 795e6af7dcf08b148a0f1ab2f83cf2f4, type: 3}
   container: {fileID: 654795552}
-  cardPrefab: {fileID: 8612540497258320675, guid: 0a5a00baf6916a84cb4a2237cddf39f6, type: 3}
   cardView: {fileID: 1334281343}
   cardsToDisplay: 4
+  spacing: 20
+  padding: 20
+  cardList: []
 --- !u!4 &519401991
 Transform:
   m_ObjectHideFlags: 0
@@ -230,7 +232,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 175}
+  m_SizeDelta: {x: -501.1, y: 175}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &654795553
 MonoBehaviour:
@@ -239,7 +241,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 654795551}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
@@ -255,7 +257,7 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
+  m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!114 &654795554
@@ -270,7 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
+  m_HorizontalFit: 0
   m_VerticalFit: 0
 --- !u!1 &705507993
 GameObject:
@@ -574,7 +576,7 @@ MonoBehaviour:
   m_Content: {fileID: 654795552}
   m_Horizontal: 1
   m_Vertical: 0
-  m_MovementType: 1
+  m_MovementType: 0
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -588,7 +590,19 @@ MonoBehaviour:
   m_VerticalScrollbarSpacing: -3
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 519401990}
+        m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
+        m_MethodName: ValueChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1334281345
 MonoBehaviour:
   m_ObjectHideFlags: 0
