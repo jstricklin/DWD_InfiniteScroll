@@ -16,3 +16,4 @@ Acceptance Criteria:
 1. Cards are spawned and sorted at runtime by the CardManager.
 2. Blank cards are spawned and pooled to a decksize of 52 and can be populated when needed.
 3. Only 4 cards are visible at a time - this variable can be changed in the CardManager before entering PlayMode.
+4. Card view can be scrolled infinitely either direction, with spawned cards being repositioned and reordered in its sibling hierarchy in order to be re-used
