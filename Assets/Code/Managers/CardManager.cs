@@ -20,9 +20,8 @@ public class CardManager : MonoBehaviour
     [Tooltip("Card View")]
     [SerializeField] RectTransform cardView;
     [SerializeField] int cardsToDisplay = 4;
-    [SerializeField] float spacing = 20f;
-    [SerializeField] float padding = 20f;
-    float cardWidth;
+    [SerializeField] float spacing;
+    float cardWidth = 100;
     #endregion
 
     #region card pool
@@ -35,76 +34,35 @@ public class CardManager : MonoBehaviour
     [SerializeField] List<GameObject> cardList = new List<GameObject>();
     Card tempCard;
 
-    void Start()
-    {
-
-        GenerateCardPool();
-        SetCardViewSize();
-        GenerateCards();
-    }
+    Vector3 newPos;
+    Transform checkCard;
 
     float lastX = 0;
     float moveDir = 1;
-    public void ValueChanged(Vector2 vector)
+
+    void Start()
     {
-        //Debug.Log("val check: " + container.position.x);
-        moveDir = (container.position.x - lastX) > 0 ? 1 : -1;
-        lastX = container.position.x;
-        HandleCardScroll(moveDir);
+        SetCardViewSize();
+        GenerateCardPool();
+        GenerateCards();
     }
-    Vector3 newPos;
-    Transform checkCard;
-    private void HandleCardScroll(float dir)
-    {
-        Debug.Log("check " + dir);
-        if (dir < 0)
-        {
-
-            checkCard = container.GetChild(0);
-            //Debug.Log($"transform checks : {(checkCard.position.x)} | {cardView.rect.width}");
-            if (checkCard.position.x + cardWidth * 2f < cardView.rect.width)
-            {
-                newPos = container.GetChild(container.childCount - 1).position;
-                newPos.x += (cardWidth * 2f) + spacing;
-                checkCard.position = newPos;
-                checkCard.transform.SetAsLastSibling();
-            }
-        } else
-        {
-            checkCard = container.GetChild(container.childCount - 1);
-            Debug.Log($"transform checks : {(checkCard.position.x)} | {cardView.rect.width}");
-            if (checkCard.position.x - cardWidth * 2f > cardView.rect.width * 3)
-            {
-                //Debug.Log("CHECK 2");
-
-                newPos = container.GetChild(0).position;
-                newPos.x -= (cardWidth * 2f) + spacing;
-                checkCard.position = newPos;
-                checkCard.transform.SetAsFirstSibling();
-            }
-        }
-    }
-
+    
     private void SetCardViewSize()
     {
         //Here we dynamically resize our card display area to ensure we only display the desired amount of cards
-        HorizontalLayoutGroup layoutGroup = container.GetComponent<HorizontalLayoutGroup>();
-        //float baseWidth = 100 * cardsToDisplay;
-        //float spacing = layoutGroup.spacing * (cardsToDisplay - 1);
-        //float padding = layoutGroup.padding.left + layoutGroup.padding.right;
+        
         float baseWidth = cardsToDisplay * cardWidth;
-        //cardView.sizeDelta = new Vector2(baseWidth + spacing + padding, cardView.rect.height);
-        cardView.sizeDelta = new Vector2(baseWidth + (spacing * (cardsToDisplay - 1)) + (padding * 2), cardView.rect.height);
+        cardView.sizeDelta = new Vector2(baseWidth , cardView.rect.height);
     }
     void GenerateCardPool()
     {
         // Here we generate a pool of cards based on a max deckSize
         for (int i = 0; i < deckSize; i++)
         {
-            //spawnGO = Instantiate(cardPrefab);
             spawnGO = new GameObject("Card " + i);
-            spawnGO.AddComponent<Image>().preserveAspect = true;
-            cardWidth = spawnGO.GetComponent<Image>().rectTransform.rect.width;
+            Image image = spawnGO.AddComponent<Image>();
+            image.preserveAspect = true;
+            image.rectTransform.sizeDelta = new Vector2(cardWidth, image.rectTransform.rect.height);
             AddToPool(spawnGO);
         }
     }
@@ -157,11 +115,12 @@ public class CardManager : MonoBehaviour
                     {
 
                         tempList[i].SetParent(container);
-                        newPos = tempList[i].GetGameObject().transform.position;
-
-                        newPos.x += padding + (cardList.Count * (cardWidth * 2f + spacing * 2));
-                        Debug.Log("check: " + newPos.x);
                         cardList.Add(tempList[i].GetGameObject());
+
+                        newPos = tempList[i].GetGameObject().transform.position;
+                        
+                        newPos.x += (cardList.Count * cardWidth * 1.5f) + cardList.Count * spacing;
+
                         tempList[i].SetPosition(newPos);
 
                     }
@@ -173,6 +132,40 @@ public class CardManager : MonoBehaviour
             } catch (Exception e)
             {
                 Debug.Log(e.ToString());
+            }
+        }
+    }
+
+    public void ValueChanged(Vector2 vector)
+    {
+        moveDir = (container.position.x - lastX) > 0 ? 1 : -1;
+        lastX = container.position.x;
+        HandleCardScroll(moveDir);
+    }
+
+    private void HandleCardScroll(float dir)
+    {
+        if (dir < 0)
+        {
+
+            checkCard = container.GetChild(0);
+            if (checkCard.position.x + cardWidth * 2 < cardView.position.x - cardView.rect.width)
+            {
+                newPos = container.GetChild(container.childCount - 1).position;
+                newPos.x += (cardWidth * 1.5f) + spacing;
+                checkCard.position = newPos;
+                checkCard.transform.SetAsLastSibling();
+            }
+        } else
+        {
+            checkCard = container.GetChild(container.childCount - 1);
+            if (checkCard.position.x - cardWidth * 2 > cardView.position.x + cardView.rect.width)
+            {
+
+                newPos = container.GetChild(0).position;
+                newPos.x -= (cardWidth * 1.5f) + spacing;
+                checkCard.position = newPos;
+                checkCard.transform.SetAsFirstSibling();
             }
         }
     }
