@@ -64,13 +64,14 @@ public class Probability : MonoBehaviour
     private void Start()
     {
         drawer.GenerateSocks();
+        Debug.Log("Press 'Spacebar' to run the Probability test");
     }
 
     private void Update()
     {
         if (Input.GetKeyDown("space"))
         {
-            Debug.Log($"Probability to match ({checkTimes}) : {ProbabilityToMatch(checkTimes)}");
+            Debug.Log($"Probability to match ({checkTimes}x) : {ProbabilityToMatch(checkTimes)}");
         }
     }
 
